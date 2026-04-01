@@ -12,7 +12,7 @@
 
 ### 3. 수행 항목 체크리스트
 - [x] 터미널 기본 조작 및 폴더 구성
-- [ ] 권한 변경 실습
+- [x] 권한 변경 실습
 - [ ] Docker 설치/점검
 - [ ] hello-world 실행
 - [ ] Dockerfile 빌드/실행
@@ -194,6 +194,63 @@ codyssey-m1 copy-dir
 codyssey-m1
 ```
 ### 5. 권한 실습 및 로그 기록
+
+#### 1) 실습 대상 생성
+```
+➜  codyssey-m1 git:(main) ✗ mkdir permission-dir
+➜  codyssey-m1 git:(main) ✗ touch permission.txt
+```
+
+#### 2) 변경 전 권한 확인 및 기본 설정
+```
+➜  codyssey-m1 git:(main) ✗ ls -l
+total 16
+drwxr-xr-x  2 kim-yejoo  staff    64 Apr  1 15:16 permission-dir
+-rw-r--r--  1 kim-yejoo  staff  7525 Apr  1 15:15 README.md
+-rw-r--r--  1 kim-yejoo  staff     0 Apr  1 15:16 script.sh
+```
+```
+➜  codyssey-m1 git:(main) ✗ echo "echo hello" > script.sh
+```
+```
+➜  codyssey-m1 git:(main) ✗ cd permission-dir 
+➜  permission-dir git:(main) ✗ touch permission.txt
+➜  permission-dir git:(main) ✗ ls
+permission.txt
+```
+
+#### 3) 파일 권한 변경
+파일 권한을 기존 644에서 744로 변경하니 파일 실행이 가능하였다.
+- 변경 전 파일 실행 시도
+- 파일 실행 권한이 제한되어서 실행되지 않았다.
+```
+➜  codyssey-m1 git:(main) ✗ ./script.sh
+zsh: permission denied: ./script.sh
+```
+
+- 파일 권한을 744로 변경하니 해당 파일이 실행되어 `hello`가 출력되었다.
+```
+➜  codyssey-m1 git:(main) ✗ chmod 744 script.sh
+➜  codyssey-m1 git:(main) ✗ ls -l script.sh
+-rwxr--r--  1 kim-yejoo  staff  11 Apr  1 15:18 script.sh
+➜  codyssey-m1 git:(main) ✗ ./script.sh
+hello
+```
+
+#### 4) 디렉토리 권한 변경
+디렉토리 권한을 기존 755에서 655로 변경하니
+- 변경 전 디렉토리 이동 및 리스트 확인
+```
+➜  codyssey-m1 git:(main) ✗ cd permission-dir 
+➜  permission-dir git:(main) ✗ ls
+permission.txt
+```
+- 변경 후 해당 디렉토리로 이동을 시도했으나 `x` 권한이 제한되어서 해당 디렉토리로 전환이 불가하였다.
+```
+➜  codyssey-m1 git:(main) ✗ chmod 655 permission-dir 
+➜  codyssey-m1 git:(main) ✗ cd permission-dir 
+cd: permission denied: permission-dir
+```
 
 ### 6. Docker 설치 및 기본 점검
 

@@ -253,8 +253,231 @@ cd: permission denied: permission-dir
 ```
 
 ### 6. Docker 설치 및 기본 점검
+#### 1) Docker 버전 확인
+```
+yejoo031053822@c3r8s5 ~ % docker --version
+Docker version 28.5.2, build ecc6942
+```
+
+#### 2) Docker 데몬 동작 여부 확인
+```
+yejoo031053822@c3r8s5 ~ % docker info
+Client:
+ Version:    28.5.2
+ Context:    orbstack
+ Debug Mode: false
+ Plugins:
+  buildx: Docker Buildx (Docker Inc.)
+    Version:  v0.29.1
+    Path:     /Users/yejoo031053822/.docker/cli-plugins/docker-buildx
+  compose: Docker Compose (Docker Inc.)
+    Version:  v2.40.3
+    Path:     /Users/yejoo031053822/.docker/cli-plugins/docker-compose
+
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 0
+ Server Version: 28.5.2
+ Storage Driver: overlay2
+  Backing Filesystem: btrfs
+  Supports d_type: true
+  Using metacopy: false
+  Native Overlay Diff: true
+  userxattr: false
+ Logging Driver: json-file
+ Cgroup Driver: cgroupfs
+ Cgroup Version: 2
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+ CDI spec directories:
+  /etc/cdi
+  /var/run/cdi
+ Swarm: inactive
+ Runtimes: io.containerd.runc.v2 runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: 1c4457e00facac03ce1d75f7b6777a7a851e5c41
+ runc version: d842d7719497cc3b774fd71620278ac9e17710e0
+ init version: de40ad0
+ Security Options:
+  seccomp
+   Profile: builtin
+  cgroupns
+ Kernel Version: 6.17.8-orbstack-00308-g8f9c941121b1
+ Operating System: OrbStack
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 6
+ Total Memory: 15.67GiB
+ Name: orbstack
+ ID: 8c335266-ae88-4e48-8262-bea08f970e06
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: false
+ Experimental: false
+ Insecure Registries:
+  ::1/128
+  127.0.0.0/8
+ Live Restore Enabled: false
+ Product License: Community Engine
+ Default Address Pools:
+   Base: 192.168.97.0/24, Size: 24
+   Base: 192.168.107.0/24, Size: 24
+   Base: 192.168.117.0/24, Size: 24
+   Base: 192.168.147.0/24, Size: 24
+   Base: 192.168.148.0/24, Size: 24
+   Base: 192.168.155.0/24, Size: 24
+   Base: 192.168.156.0/24, Size: 24
+   Base: 192.168.158.0/24, Size: 24
+   Base: 192.168.163.0/24, Size: 24
+   Base: 192.168.164.0/24, Size: 24
+   Base: 192.168.165.0/24, Size: 24
+   Base: 192.168.166.0/24, Size: 24
+   Base: 192.168.167.0/24, Size: 24
+   Base: 192.168.171.0/24, Size: 24
+   Base: 192.168.172.0/24, Size: 24
+   Base: 192.168.181.0/24, Size: 24
+   Base: 192.168.183.0/24, Size: 24
+   Base: 192.168.186.0/24, Size: 24
+   Base: 192.168.207.0/24, Size: 24
+   Base: 192.168.214.0/24, Size: 24
+   Base: 192.168.215.0/24, Size: 24
+   Base: 192.168.216.0/24, Size: 24
+   Base: 192.168.223.0/24, Size: 24
+   Base: 192.168.227.0/24, Size: 24
+   Base: 192.168.228.0/24, Size: 24
+   Base: 192.168.229.0/24, Size: 24
+   Base: 192.168.237.0/24, Size: 24
+   Base: 192.168.239.0/24, Size: 24
+   Base: 192.168.242.0/24, Size: 24
+   Base: 192.168.247.0/24, Size: 24
+   Base: fd07:b51a:cc66:d000::/56, Size: 64
+
+WARNING: DOCKER_INSECURE_NO_IPTABLES_RAW is set
+```
 
 ### 7. Docker 기본 운영 명령 수행
+#### 1) 이미지 다운로드
+```
+yejoo031053822@c3r8s5 ~ % docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+ec781dee3f47: Pull complete 
+bb3d0aa29654: Pull complete 
+510ddf6557d6: Pull complete 
+cde7a05ae428: Pull complete 
+587e3d84dbb5: Pull complete 
+3189680c601f: Pull complete 
+5e815e07e569: Pull complete 
+Digest: sha256:7150b3a39203cb5bee612ff4a9d18774f8c7caf6399d6e8985e97e28eb751c18
+Status: Downloaded newer image for nginx:latest
+docker.io/library/nginx:latest
+yejoo031053822@c3r8s5 ~ % docker images
+REPOSITORY   TAG       IMAGE ID       CREATED      SIZE
+nginx        latest    0cf1d6af5ca7   8 days ago   161MB
+```
+
+#### 2) 이미지 목록 확인
+```
+yejoo031053822@c3r8s5 ~ % docker images
+REPOSITORY   TAG       IMAGE ID       CREATED      SIZE
+nginx        latest    0cf1d6af5ca7   8 days ago   161MB
+```
+
+#### 3) 컨테이너 실행
+```
+yejoo031053822@c3r8s5 ~ % docker run -d --name web-test1 -p 8080:80 nginx
+57ef289ce65cac2730e9f31bbf0742e297bf84869ed1e498ca43a12cccd15722
+```
+
+#### 4) 실행 중인 컨테이너 목록 확인
+```
+yejoo031053822@c3r8s5 ~ % docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED              STATUS              PORTS                                     NAMES
+57ef289ce65c   nginx     "/docker-entrypoint.…"   About a minute ago   Up About a minute   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   web-test1
+```
+
+#### 5) 컨테이너 중지
+```
+yejoo031053822@c3r8s5 ~ % docker stop web-test1
+web-test1
+```
+
+#### 6) 컨테이너 목록 확인
+```
+yejoo031053822@c3r8s5 ~ % docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS                      PORTS     NAMES
+57ef289ce65c   nginx     "/docker-entrypoint.…"   2 minutes ago   Exited (0) 16 seconds ago             web-test1
+```
+
+#### 7) 컨테이너 로그 확인
+```
+yejoo031053822@c3r8s5 ~ % docker logs web-test1
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2026/04/02 12:08:04 [notice] 1#1: using the "epoll" event method
+2026/04/02 12:08:04 [notice] 1#1: nginx/1.29.7
+2026/04/02 12:08:04 [notice] 1#1: built by gcc 14.2.0 (Debian 14.2.0-19) 
+2026/04/02 12:08:04 [notice] 1#1: OS: Linux 6.17.8-orbstack-00308-g8f9c941121b1
+2026/04/02 12:08:04 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 20480:1048576
+2026/04/02 12:08:04 [notice] 1#1: start worker processes
+2026/04/02 12:08:04 [notice] 1#1: start worker process 29
+2026/04/02 12:08:04 [notice] 1#1: start worker process 30
+2026/04/02 12:08:04 [notice] 1#1: start worker process 31
+2026/04/02 12:08:04 [notice] 1#1: start worker process 32
+2026/04/02 12:08:04 [notice] 1#1: start worker process 33
+2026/04/02 12:08:04 [notice] 1#1: start worker process 34
+2026/04/02 12:10:16 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026/04/02 12:10:16 [notice] 29#29: gracefully shutting down
+2026/04/02 12:10:16 [notice] 29#29: exiting
+2026/04/02 12:10:16 [notice] 29#29: exit
+2026/04/02 12:10:16 [notice] 33#33: gracefully shutting down
+2026/04/02 12:10:16 [notice] 33#33: exiting
+2026/04/02 12:10:16 [notice] 30#30: gracefully shutting down
+2026/04/02 12:10:16 [notice] 30#30: exiting
+2026/04/02 12:10:16 [notice] 33#33: exit
+2026/04/02 12:10:16 [notice] 30#30: exit
+2026/04/02 12:10:16 [notice] 31#31: gracefully shutting down
+2026/04/02 12:10:16 [notice] 31#31: exiting
+2026/04/02 12:10:16 [notice] 31#31: exit
+2026/04/02 12:10:16 [notice] 32#32: gracefully shutting down
+2026/04/02 12:10:16 [notice] 32#32: exiting
+2026/04/02 12:10:16 [notice] 34#34: gracefully shutting down
+2026/04/02 12:10:16 [notice] 34#34: exiting
+2026/04/02 12:10:16 [notice] 34#34: exit
+2026/04/02 12:10:16 [notice] 32#32: exit
+2026/04/02 12:10:17 [notice] 1#1: signal 17 (SIGCHLD) received from 29
+2026/04/02 12:10:17 [notice] 1#1: worker process 29 exited with code 0
+2026/04/02 12:10:17 [notice] 1#1: signal 29 (SIGIO) received
+2026/04/02 12:10:17 [notice] 1#1: signal 17 (SIGCHLD) received from 32
+2026/04/02 12:10:17 [notice] 1#1: worker process 32 exited with code 0
+2026/04/02 12:10:17 [notice] 1#1: worker process 34 exited with code 0
+2026/04/02 12:10:17 [notice] 1#1: signal 29 (SIGIO) received
+2026/04/02 12:10:17 [notice] 1#1: signal 17 (SIGCHLD) received from 30
+2026/04/02 12:10:17 [notice] 1#1: worker process 30 exited with code 0
+2026/04/02 12:10:17 [notice] 1#1: signal 17 (SIGCHLD) received from 33
+2026/04/02 12:10:17 [notice] 1#1: worker process 31 exited with code 0
+2026/04/02 12:10:17 [notice] 1#1: worker process 33 exited with code 0
+2026/04/02 12:10:17 [notice] 1#1: exit
+```
+
+#### 8) 리소스 확인
+```
+yejoo031053822@c3r8s5 ~ % docker stats --no-stream
+CONTAINER ID   NAME        CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O        PIDS
+57ef289ce65c   web-test1   0.00%     9.75MiB / 15.67GiB   0.06%     1.13kB / 126B   16.1MB / 4.1kB   7
+```
 
 ### 8. 컨테이너 실행 실습
 

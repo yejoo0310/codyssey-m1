@@ -15,6 +15,8 @@
 - [x] 권한 변경 실습
 - [x] Docker 설치/점검
 - [x] hello-world 실행
+- [x] ubuntu 실행
+- [x] attach, exec 차이 실습
 - [ ] Dockerfile 빌드/실행
 - [ ] 포트 매핑 접속(2회)
 - [ ] 바인드 마운트 반영
@@ -543,6 +545,39 @@ bin   dev  home  lib64  mnt  proc  run   srv  test.txt  usr
 boot  etc  lib   media  opt  root  sbin  sys  tmp       var
 ```
 
+#### 4) 컨테이너 종료/유지 실습
+`exec` 
+```
+yejoo031053822@c3r8s5 ~ % docker exec -it ubuntu-test1 /bin/bash
+root@b3e1d0685423:/# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@b3e1d0685423:/# pwd
+/
+root@b3e1d0685423:/# exit
+exit
+yejoo031053822@c3r8s5 ~ % docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
+b3e1d0685423   ubuntu    "/bin/bash"   25 minutes ago   Up 25 minutes             ubuntu-test1
+```
+
+`attach`
+```
+yejoo031053822@c3r8s5 ~ % docker attach ubuntu-test1
+root@b3e1d0685423:/# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@b3e1d0685423:/# pwd
+/
+root@b3e1d0685423:/# exit
+exit
+yejoo031053822@c3r8s5 ~ % docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED             STATUS                         PORTS     NAMES
+b3e1d0685423   ubuntu        "/bin/bash"              26 minutes ago      Exited (0) 3 seconds ago                 ubuntu-test1
+18b4e5d04f04   ubuntu        "/bin/bash"              About an hour ago   Exited (0) About an hour ago             cranky_yonath
+8cae1bf51e2d   ubuntu        "bash"                   22 hours ago        Exited (137) 21 hours ago                sharp_albattani
+0c3b30157c99   hello-world   "/hello"                 22 hours ago        Exited (0) 22 hours ago                  distracted_matsumoto
+57ef289ce65c   nginx         "/docker-entrypoint.…"   23 hours ago        Exited (0) 21 hours ago                  web-test1
+yejoo031053822@c3r8s5 ~ % 
+```
 
 ### 9. 기존 Dockerfile 기반 커스텀 이미지 제작
 

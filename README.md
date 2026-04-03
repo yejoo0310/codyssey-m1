@@ -22,6 +22,7 @@
 - [x] 바인드 마운트 반영
 - [x] 볼륨 영속성
 - [x] Git 설정 + VSCode GitHub 연동
+- [x] 트러블슈팅 정리
 
 ### 4. 터미널 조작 로그 기록
 
@@ -744,4 +745,81 @@ yejoo031053822@c3r8s5 codyssey-m1 % git remote -v
 origin  https://github.com/yejoo0310/codyssey-m1.git (fetch)
 origin  https://github.com/yejoo0310/codyssey-m1.git (push)
 yejoo031053822@c3r8s5 codyssey-m1 % 
+```
+
+---
+### 트러블 슈팅
+#### 1) `ubuntu` 컨테이너 실행 후 `attatch`, `exec`로 진입하고자 하였는데 컨테이너가 꺼지는 문제가 발생
+```
+yejoo031053822@c3r8s5 ~ % docker run -d --name ubuntu-test1 ubuntu
+9cd6b78c1e4e3e035af97f90d6b99ffe697aad8b879f4fbff7225cf4fd5a3ad7
+yejoo031053822@c3r8s5 ~ % docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS                      PORTS     NAMES
+9cd6b78c1e4e   ubuntu        "/bin/bash"              7 seconds ago   Exited (0) 6 seconds ago              ubuntu-test1
+18b4e5d04f04   ubuntu        "/bin/bash"              7 minutes ago   Exited (0) 6 minutes ago              cranky_yonath
+8cae1bf51e2d   ubuntu        "bash"                   21 hours ago    Exited (137) 20 hours ago             sharp_albattani
+0c3b30157c99   hello-world   "/hello"                 21 hours ago    Exited (0) 21 hours ago               distracted_matsumoto
+57ef289ce65c   nginx         "/docker-entrypoint.…"   21 hours ago    Exited (0) 20 hours ago               web-test1
+yejoo031053822@c3r8s5 ~ %
+```
+
+해결
+```
+yejoo031053822@c3r8s5 ~ % docker run -d -it --name ubuntu-test1 ubuntu
+b3e1d068542343100ebc715542f475b8dad42cf421406f72a884d6e5dc22a6dc
+yejoo031053822@c3r8s5 ~ % docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS                      PORTS     NAMES
+b3e1d0685423   ubuntu        "/bin/bash"              3 seconds ago    Up 2 seconds                          ubuntu-test1
+18b4e5d04f04   ubuntu        "/bin/bash"              46 minutes ago   Exited (0) 45 minutes ago             cranky_yonath
+8cae1bf51e2d   ubuntu        "bash"                   22 hours ago     Exited (137) 21 hours ago             sharp_albattani
+0c3b30157c99   hello-world   "/hello"                 22 hours ago     Exited (0) 22 hours ago               distracted_matsumoto
+57ef289ce65c   nginx         "/docker-entrypoint.…"   22 hours ago     Exited (0) 21 hours ago               web-test1
+yejoo031053822@c3r8s5 ~ %
+```
+
+#### 2) 포트 충돌 문제
+```
+yejoo031053822@c3r8s5 app % docker run -d -p 8080:80 --name bind-test -v $(pwd)/index.html:/usr/share/nginx/html/index.html my-web
+4347c93363e68791d887f2ee60589bdbd23e7c9375860b280307e1a1f60ecc78
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint bind-test (5c7a7fa6a0a8c81eff1a85d62a62ab4279a43085464e6d54a4d4a511a64b6be0): Bind for 0.0.0.0:8080 failed: port is already allocated
+
+Run 'docker run --help' for more information
+```
+포트 바꿨는데도 문제 발생
+```
+yejoo031053822@c3r8s5 codyssey-m1 % docker run -d -p 8081:80 --name bind-test -v $(pwd)/index.html:/usr/share/nginx/html/index.html my-web
+docker: Error response from daemon: Conflict. The container name "/bind-test" is already in use by container "923de94849ce25852b9bae8b0da1b35c6cda9285bb3b8c2dd774638f41fa4e60". You have to remove (or rename) that container to be able to reuse that name.
+
+Run 'docker run --help' for more information
+yejoo031053822@c3r8s5 codyssey-m1 % docker ps -a                                                                                          
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS                      PORTS                                     NAMES
+923de94849ce   my-web        "/docker-entrypoint.…"   44 seconds ago   Created                                                               bind-test
+854fb9d46af5   my-web        "/docker-entrypoint.…"   7 minutes ago    Up 7 minutes                0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web-app
+b33edece4407   nginx         "/docker-entrypoint.…"   24 minutes ago   Exited (0) 15 minutes ago                                             volume-test2
+05756d093a7d   nginx         "/docker-entrypoint.…"   2 hours ago      Exited (0) 2 hours ago                                                first-nginx
+b3e1d0685423   ubuntu        "/bin/bash"              4 hours ago      Up 14 minutes                                                         ubuntu-test1
+18b4e5d04f04   ubuntu        "/bin/bash"              4 hours ago      Exited (0) 4 hours ago                                                cranky_yonath
+8cae1bf51e2d   ubuntu        "bash"                   25 hours ago     Exited (137) 25 hours ago                                             sharp_albattani
+0c3b30157c99   hello-world   "/hello"                 26 hours ago     Exited (0) 26 hours ago                                               distracted_matsumoto
+57ef289ce65c   nginx         "/docker-entrypoint.…"   26 hours ago     Exited (0) 25 hours ago                                               web-test1
+yejoo031053822@c3r8s5 codyssey-m1 % 
+```
+
+해결
+```
+yejoo031053822@c3r8s5 app % docker rm bind-test
+bind-test
+yejoo031053822@c3r8s5 app % docker run -d -p 8081:80 --name bind-test -v $(pwd)/index.html:/usr/share/nginx/html/index.html my-web
+6283c202d031222139be4283637441cdb1f6edfb7e98296162cc5bea9897161c
+yejoo031053822@c3r8s5 app % docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS                      PORTS                                     NAMES
+6283c202d031   my-web        "/docker-entrypoint.…"   10 seconds ago   Up 10 seconds               0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   bind-test
+854fb9d46af5   my-web        "/docker-entrypoint.…"   4 minutes ago    Up 4 minutes                0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web-app
+b33edece4407   nginx         "/docker-entrypoint.…"   20 minutes ago   Exited (0) 11 minutes ago                                             volume-test2
+05756d093a7d   nginx         "/docker-entrypoint.…"   2 hours ago      Exited (0) 2 hours ago                                                first-nginx
+b3e1d0685423   ubuntu        "/bin/bash"              3 hours ago      Up 11 minutes                                                         ubuntu-test1
+18b4e5d04f04   ubuntu        "/bin/bash"              4 hours ago      Exited (0) 4 hours ago                                                cranky_yonath
+8cae1bf51e2d   ubuntu        "bash"                   25 hours ago     Exited (137) 25 hours ago                                             sharp_albattani
+0c3b30157c99   hello-world   "/hello"                 25 hours ago     Exited (0) 25 hours ago                                               distracted_matsumoto
+57ef289ce65c   nginx         "/docker-entrypoint.…"   26 hours ago     Exited (0) 25 hours ago                                               web-test1
 ```

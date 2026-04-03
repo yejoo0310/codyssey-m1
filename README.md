@@ -19,7 +19,7 @@
 - [x] attach, exec 차이 실습
 - [x] 기존 Dockerfile 기반 커스텀 이미지 제작
 - [x] 포트 매핑 접속
-- [ ] 바인드 마운트 반영
+- [x] 바인드 마운트 반영
 - [ ] 볼륨 영속성
 - [x] Git 설정 + VSCode GitHub 연동
 
@@ -632,8 +632,38 @@ yejoo031053822@c3r8s5 ~ % curl localhost:8080
 </html>%     
 ```
 
+### 10. Docker 바인드 마운트 실습
+#### 1) 호스트 파일 변경 전
+```
+yejoo031053822@c3r8s5 app % docker run -d -p 8081:80 --name bind-test -v $(pwd)/index.html:/usr/share/nginx/html/index.html my-web
+1217e1f80a2089161c23992c09dbb49139307e8b61d01c04ecce9c5e23ee468a
+yejoo031053822@c3r8s5 app % 
+```
+![alt text](image-4.png) 
+```
+yejoo031053822@c3r8s5 app % curl localhost:8081
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>커스텀 이미지 제작</title>
+    </head>
+    <h1>기존 Dockerfile 기반으로 커스텀 이미지 제작</h1>
+</html>%                                                                                                                                                                                                                                                                    
+yejoo031053822@c3r8s5 app % 
+```
 
-### 10. 포트 매핑 및 접속 증거
+#### 2) 호스트 파일 변경 후의 웹사이트는 변경이 적용되어 있음을 볼 수 있다.
+```
+yejoo031053822@c3r8s5 app % echo "bind mount" > index.html
+yejoo031053822@c3r8s5 app %  
+```
+![alt text](image-5.png)
+```
+yejoo031053822@c3r8s5 app % curl localhost:8081           
+bind mount
+yejoo031053822@c3r8s5 app % 
+```
 
 ### 11. Docker 볼륨 영속성 검증
 

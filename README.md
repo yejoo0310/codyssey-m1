@@ -13,13 +13,13 @@
 ### 3. 수행 항목 체크리스트
 - [x] 터미널 기본 조작 및 폴더 구성
 - [x] 권한 변경 실습
-- [ ] Docker 설치/점검
-- [ ] hello-world 실행
+- [x] Docker 설치/점검
+- [x] hello-world 실행
 - [ ] Dockerfile 빌드/실행
 - [ ] 포트 매핑 접속(2회)
 - [ ] 바인드 마운트 반영
 - [ ] 볼륨 영속성
-- [ ] Git 설정 + VSCode GitHub 연동
+- [x] Git 설정 + VSCode GitHub 연동
 
 ### 4. 터미널 조작 로그 기록
 
@@ -551,3 +551,40 @@ boot  etc  lib   media  opt  root  sbin  sys  tmp       var
 ### 11. Docker 볼륨 영속성 검증
 
 ### 12. Git 설정 및 GitHub 연동
+#### 1) 기본 브랜치 설정
+```
+yejoo031053822@c3r8s5 codyssey-m1 % git config --global init.defaultBranch main
+yejoo031053822@c3r8s5 codyssey-m1 % git config --get init.defaultBranch        
+main
+```
+#### 2) Git 사용자 정보 설정
+```
+yejoo031053822@c3r8s5 codyssey-m1 % git config --list                          
+credential.helper=osxkeychain
+user.name=yejoo0310
+user.email=
+init.defaultbranch=main
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/yejoo0310/codyssey-m1.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+branch.main.vscode-merge-base=origin/main
+yejoo031053822@c3r8s5 codyssey-m1 % 
+```
+
+#### 3) VSCode와 GitHub 연동
+![alt text](image.png)
+
+#### 4) 저장소 연동 확인
+```
+yejoo031053822@c3r8s5 codyssey-m1 % git remote -v
+origin  https://github.com/yejoo0310/codyssey-m1.git (fetch)
+origin  https://github.com/yejoo0310/codyssey-m1.git (push)
+yejoo031053822@c3r8s5 codyssey-m1 % 
+```

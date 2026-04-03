@@ -17,8 +17,8 @@
 - [x] hello-world 실행
 - [x] ubuntu 실행
 - [x] attach, exec 차이 실습
-- [ ] Dockerfile 빌드/실행
-- [ ] 포트 매핑 접속(2회)
+- [x] 기존 Dockerfile 기반 커스텀 이미지 제작
+- [x] 포트 매핑 접속
 - [ ] 바인드 마운트 반영
 - [ ] 볼륨 영속성
 - [x] Git 설정 + VSCode GitHub 연동
@@ -580,6 +580,58 @@ yejoo031053822@c3r8s5 ~ %
 ```
 
 ### 9. 기존 Dockerfile 기반 커스텀 이미지 제작
+#### 1) 커스텀 전 기본 nginx 페이지 실행
+```
+yejoo031053822@c3r8s5 ~ % docker run -d -p 8080:80 --name first-nginx nginx 
+05756d093a7d2044a23eecf3535ddb6fae487abd77510d8b1c792d44dc18f201
+yejoo031053822@c3r8s5 ~ % 
+```
+![alt text](image-1.png)
+
+#### 2) 커스텀 이미지 빌드
+```
+yejoo031053822@c3r8s5 app % docker build -t my-web .
+[+] Building 0.9s (7/7) FINISHED                                                                                                                                                                                                                            docker:orbstack
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                   0.1s
+ => => transferring dockerfile: 113B                                                                                                                                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/nginx:latest                                                                                                                                                                                                        0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                      0.1s
+ => => transferring context: 2B                                                                                                                                                                                                                                        0.0s
+ => [internal] load build context                                                                                                                                                                                                                                      0.1s
+ => => transferring context: 244B                                                                                                                                                                                                                                      0.0s
+ => CACHED [1/2] FROM docker.io/library/nginx:latest                                                                                                                                                                                                                   0.0s
+ => [2/2] COPY index.html /usr/share/nginx/html/index.html                                                                                                                                                                                                             0.1s
+ => exporting to image                                                                                                                                                                                                                                                 0.2s
+ => => exporting layers                                                                                                                                                                                                                                                0.1s
+ => => writing image sha256:d3712465b1f65878fadbd35b6c890fe1df6d14c6e080119bea9b29b5c1824075                                                                                                                                                                           0.0s
+ => => naming to docker.io/library/my-web                                                                                                                                                                                                                              0.0s
+yejoo031053822@c3r8s5 app % docker images
+REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
+my-web        latest    d3712465b1f6   5 seconds ago   161MB
+nginx         latest    0cf1d6af5ca7   9 days ago      161MB
+hello-world   latest    e2ac70e7319a   10 days ago     10.1kB
+ubuntu        latest    f794f40ddfff   5 weeks ago     78.1MB
+yejoo031053822@c3r8s5 app % 
+```
+#### 3) 커스텀 이미지 컨테이너 실행
+```
+yejoo031053822@c3r8s5 ~ % docker run -d -p 8080:80 --name my-web-app my-web
+3f42a241ff91b37053fe0d15a590c0c791930aa87f660dab7fd523ebc4bbf748
+yejoo031053822@c3r8s5 ~ % 
+```
+![alt text](image-2.png)
+```
+yejoo031053822@c3r8s5 ~ % curl localhost:8080
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>커스텀 이미지 제작</title>
+    </head>
+    <h1>기존 Dockerfile 기반으로 커스텀 이미지 제작</h1>
+</html>%     
+```
+
 
 ### 10. 포트 매핑 및 접속 증거
 

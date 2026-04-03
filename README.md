@@ -20,7 +20,7 @@
 - [x] 기존 Dockerfile 기반 커스텀 이미지 제작
 - [x] 포트 매핑 접속
 - [x] 바인드 마운트 반영
-- [ ] 볼륨 영속성
+- [x] 볼륨 영속성
 - [x] Git 설정 + VSCode GitHub 연동
 
 ### 4. 터미널 조작 로그 기록
@@ -666,6 +666,44 @@ yejoo031053822@c3r8s5 app %
 ```
 
 ### 11. Docker 볼륨 영속성 검증
+#### 1) 도커 볼륨 생성 
+```
+yejoo031053822@c3r8s5 codyssey-m1 % docker volume create my-data
+my-data
+yejoo031053822@c3r8s5 codyssey-m1 % 
+```
+
+#### 2) 볼륨 연결 후 컨테이너 실행
+볼륨 연결
+```
+yejoo031053822@c3r8s5 codyssey-m1 % docker run -d -p 8082:80 --name volume-test1 -v my-data:/data nginx 
+8e491a96172a0d5e251fb22de1c0a9b3f8e0cbb0ab5bd26211a71542384ebb44
+yejoo031053822@c3r8s5 codyssey-m1 % 
+```
+
+`volume-test1` 컨테이너에 내부에 파일 생성
+```
+yejoo031053822@c3r8s5 codyssey-m1 % docker exec volume-test1 sh -c "echo 'volume data' > /data/test.txt" 
+yejoo031053822@c3r8s5 codyssey-m1 % docker exec volume-test1 cat /data/test.txt
+volume data
+yejoo031053822@c3r8s5 codyssey-m1 % 
+```
+
+`volume-test1` 컨테이너 삭제
+```
+yejoo031053822@c3r8s5 codyssey-m1 % docker stop volume-test1
+volume-test1
+yejoo031053822@c3r8s5 codyssey-m1 % docker rm volume-test1
+volume-test1
+```
+
+새로운 컨테이너 `volume-test2`에서 기존 볼륨 연결 후 데이터 확인
+```
+yejoo031053822@c3r8s5 codyssey-m1 % docker run -d -p 8082:80 --name volume-test2 -v my-data:/data nginx           
+b33edece44075e12c1d21d9e3bc0b6cd0a1645c6b6e32eff1fcc39e31b1779fa
+yejoo031053822@c3r8s5 codyssey-m1 % docker exec volume-test2 cat /data/test.txt                                   
+volume data
+```
 
 ### 12. Git 설정 및 GitHub 연동
 #### 1) 기본 브랜치 설정

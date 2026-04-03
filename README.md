@@ -714,6 +714,8 @@ main
 ```
 #### 2) Git 사용자 정보 설정
 ```
+yejoo031053822@c3r8s5 codyssey-m1 % git config --global user.name "yejoo0310"
+yejoo031053822@c3r8s5 codyssey-m1 % git config --global user.email ""
 yejoo031053822@c3r8s5 codyssey-m1 % git config --list                          
 credential.helper=osxkeychain
 user.name=yejoo0310

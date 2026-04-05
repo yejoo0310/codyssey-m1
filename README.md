@@ -260,6 +260,15 @@ permission.txt
 cd: permission denied: permission-dir
 ```
 
+#### 5) 권한 숫자 규칙
+#### 파일 권한 숫자 표기의 의미
+`r`: 4
+`w`: 2
+`x`: 1
+
+이 합계 숫자를 각각 3자리씩 나눠 소유자/그룹/기타 사용자 순으로 조합하여서 표현
+
+
 ### 6. Docker 설치 및 기본 점검
 #### 1) Docker 버전 확인
 ```

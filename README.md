@@ -785,8 +785,11 @@ CONTAINER ID   IMAGE         COMMAND                  CREATED         STATUS    
 57ef289ce65c   nginx         "/docker-entrypoint.…"   21 hours ago    Exited (0) 20 hours ago               web-test1
 yejoo031053822@c3r8s5 ~ %
 ```
+원인
+`ubuntu` 이미지는 기본 실행 명령어가 `bin/bash`인데 `-d`, 즉 백그라운드 모드로만 들어가면 입력을 기다리는 터미널이 없어 `bash` 프로세스가 할 일이 없다고 판단하여 즉시 종료됨. 도커 컨테이너는 메인 프로세스가 종료되면 컨테이너도 함께 종료되는 생명주기를 가졌기 때문.
 
 해결
+- `-it` 옵션을 추가함으로써 컨테이너 내부에 가상 터미널을 할당하고 표준 입력을 유지시켜 `/bin/bash` 프로세스가 대기상태가 되어 컨테이너가 종료되지 않고 계속 실행되게 하였다.
 ```
 yejoo031053822@c3r8s5 ~ % docker run -d -it --name ubuntu-test1 ubuntu
 b3e1d068542343100ebc715542f475b8dad42cf421406f72a884d6e5dc22a6dc
@@ -800,7 +803,9 @@ b3e1d0685423   ubuntu        "/bin/bash"              3 seconds ago    Up 2 seco
 yejoo031053822@c3r8s5 ~ %
 ```
 
-#### 2) 포트 충돌 문제
+#### 2) 포트 충돌 문제 후 연쇄적으로 발생한 컨테이너 이름 중복 문제
+문제
+- 현재 `8080`번 포트를 사용중이라 포트 충돌 문제가 발생하였다. 
 ```
 yejoo031053822@c3r8s5 app % docker run -d -p 8080:80 --name bind-test -v $(pwd)/index.html:/usr/share/nginx/html/index.html my-web
 4347c93363e68791d887f2ee60589bdbd23e7c9375860b280307e1a1f60ecc78
@@ -808,7 +813,7 @@ docker: Error response from daemon: failed to set up container networking: drive
 
 Run 'docker run --help' for more information
 ```
-포트 바꿨는데도 문제 발생
+- 따라서 사용하지 않는 `8081`번 포트로 바꿨는데도 문제 발생
 ```
 yejoo031053822@c3r8s5 codyssey-m1 % docker run -d -p 8081:80 --name bind-test -v $(pwd)/index.html:/usr/share/nginx/html/index.html my-web
 docker: Error response from daemon: Conflict. The container name "/bind-test" is already in use by container "923de94849ce25852b9bae8b0da1b35c6cda9285bb3b8c2dd774638f41fa4e60". You have to remove (or rename) that container to be able to reuse that name.
@@ -828,7 +833,13 @@ b3e1d0685423   ubuntu        "/bin/bash"              4 hours ago      Up 14 min
 yejoo031053822@c3r8s5 codyssey-m1 % 
 ```
 
+원인
+- 포트 충돌로 실행에 실패한 컨테이너가 비록 실행(Up)은 안 됐지만, 생성(Created)은 되어서 생긴 문제
+- 이전 실행 시 네트워크 설정 단계에서 실패하였으나 컨테이너 객체는 생성되어 이름을 점유하고 있음.
+- `docker run`을 치면 도커는 우선 컨테이너를 생성하고 이름을 붙인다. 따라서 포트 중복 문제로 실행에는 실패했지만 `bind-test`라는 이름표를 단 컨테이너 껍데기가 존재해 이름 중복 문제가 발생하였다. 
+
 해결
+- 기존에 남아있는 껍데기만 있는 컨테이너를 삭제하고 다시 실행하였다.
 ```
 yejoo031053822@c3r8s5 app % docker rm bind-test
 bind-test
@@ -846,3 +857,6 @@ b3e1d0685423   ubuntu        "/bin/bash"              3 hours ago      Up 11 min
 0c3b30157c99   hello-world   "/hello"                 25 hours ago     Exited (0) 25 hours ago                                               distracted_matsumoto
 57ef289ce65c   nginx         "/docker-entrypoint.…"   26 hours ago     Exited (0) 25 hours ago                                               web-test1
 ```
+
+배운점
+- `docker run` 실패 시 해당 이름의 컨테이너가 남아있을 수도 있으므로 `docker ps -a`로 전체 목록을 확인하는 습관을 들이는 것이 필요한 것 같다.

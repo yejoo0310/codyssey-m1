@@ -534,6 +534,10 @@ Digest: sha256:186072bba1b2f436cbb91ef2567abca677337cfc786c86e107d25b7072feef0c
 Status: Downloaded newer image for ubuntu:latest
 root@8cae1bf51e2d:/#
 ```
+- `-i`: 컨테이너의 표준 입력을 열어둠
+- `-t`: 가상 터미널을 할당하여 화면 출력이 터미널처럼 보이게끔 함
+- `bash`: 컨테이너가 뜨자마자 실행할 프로그램
+- 컴퓨터 안에 가상화된 리눅스 환경을 만들고, 그 안으로 직접 들어감
 
 #### 3) `ubuntu` 컨테이너 진입 후 간단 명령 실행
 파일 목록을 확인

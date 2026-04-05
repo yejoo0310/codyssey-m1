@@ -559,6 +559,9 @@ boot  etc  lib   media  opt  root  sbin  sys  tmp       var
 ```
 
 #### 4) 컨테이너 종료/유지 실습
+- 백그라운드에서 실행 중인(`-d`) 컨테이너 내부로 들어가는 명령어
+- 현재 실행 중인 컨테이너에 새로운 프로세스를 추가로 실행해서 들어가는 방법
+
 `exec` 
 ```
 yejoo031053822@c3r8s5 ~ % docker exec -it ubuntu-test1 /bin/bash
@@ -573,6 +576,8 @@ CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS   
 b3e1d0685423   ubuntu    "/bin/bash"   25 minutes ago   Up 25 minutes             ubuntu-test1
 ```
 
+- 현재 실행 중인 컨테이너의 메인 프로세스의 터미널에 달라붙는 방식
+- 만약 `bash`를 메인으로 띄운 컨테이너에 `attach`했다가 `exit`을 입력하면 컨테이너의 메인 프로세스 자체가 종료되면서 컨테이너가 꺼져버림
 `attach`
 ```
 yejoo031053822@c3r8s5 ~ % docker attach ubuntu-test1
